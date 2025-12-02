@@ -5,7 +5,7 @@ class PIDController:
         self.Kd = Kd  # Derivative gain
         self.setpoint = setpoint  # Desired value
 
-        self.previous_error = 0
+        self.previous_error = None
         self.integral = 0
         self.last_time = None
 
@@ -23,7 +23,10 @@ class PIDController:
         integral_term = self.Ki * self.integral
 
         # Derivative term
-        derivative = (error - self.previous_error) / dt
+        if  self.previous_error is None:
+            derivative = 0
+        else:
+            derivative = (error - self.previous_error) / dt
         derivative_term = self.Kd * derivative
 
         # Calculate total output
