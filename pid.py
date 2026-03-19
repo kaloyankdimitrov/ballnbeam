@@ -1,5 +1,5 @@
 class PIDController:
-    def __init__(self, Kp, Ki, Kd, setpoint):
+    def __init__(self, Kp, Ki, Kd, setpoint=0):
         self.Kp = Kp  # Proportional gain
         self.Ki = Ki  # Integral gain
         self.Kd = Kd  # Derivative gain
