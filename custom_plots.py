@@ -16,6 +16,37 @@ def set_plot_limits(ax, x_min, x_max, y_min, y_max):
     ax.set_xlim(x_min - 0.05 * (x_max - x_min), x_max + 0.05 * (x_max - x_min))
     ax.set_ylim(y_min - 0.05 * (y_max - y_min), y_max + 0.05 * (y_max - y_min))
 
+class BallPlot():
+    def __init__(self):
+        pass
+        self.fig, self.ax = plt.subplots(
+            figsize=(8,3)
+        )
+        self.fig.set_constrained_layout(True)   # allow dynamic spacing
+
+        self.ax.set_title('Ball Position')
+        self.ball_pos_setpoint_t, self.ball_pos_setpoint = [], []
+        self.ball_pos_actual_t, self.ball_pos_actual = [], []
+        (self.ball_setpoint_line,) = self.ax.plot([], [], lw=2, label='setpoint')
+        (self.ball_actual_line,) = self.ax.plot([], [], lw=2, label='measurement')
+        self.ax.legend()
+
+    def update_ball_plot(self, t, new_ball_setpoint, new_ball_actual, live=False):
+        # pos
+        self.ball_pos_setpoint_t.append(t)
+        self.ball_pos_setpoint.append(new_ball_setpoint)
+        self.ball_pos_actual_t.append(t)
+        self.ball_pos_actual.append(new_ball_actual)
+        if live:
+            self.show_ball_plot(t)
+    def show_ball_plot(self, t):
+        self.ball_setpoint_line.set_data(self.ball_pos_setpoint_t, self.ball_pos_setpoint)
+        self.ball_actual_line.set_data(self.ball_pos_actual_t, self.ball_pos_actual)
+        ball_data = jnp.array(self.ball_pos_setpoint + self.ball_pos_actual)
+        set_plot_limits(self.ax, 0, t, jnp.min(ball_data), jnp.max(ball_data))
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+
 class MotorPlot():
     def __init__(self):
         self.fig, self.ax = plt.subplots(
