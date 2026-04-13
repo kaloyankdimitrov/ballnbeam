@@ -1,3 +1,5 @@
+import jax
+@jax.jit(static_argnums=(0,))
 def rk4_step(f, x0, dt, u):
     """
     Input:
