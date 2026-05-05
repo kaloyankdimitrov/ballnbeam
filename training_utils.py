@@ -92,13 +92,18 @@ def train_model(model, optimizer, loss_fn, checkpoint_dir, num_epochs=1000, chec
             current_epoch_start = 0
     elif start_epoch > 0:
         # Resume from specific epoch
-        checkpoint_file = best_checkpoint_path.format(start_epoch)
-        if os.path.exists(checkpoint_file):
+        best_checkpoint_file = best_checkpoint_path.format(start_epoch)
+        latest_checkpoint_file = latest_checkpoint_path.format(start_epoch)
+        if os.path.exists(best_checkpoint_file):
             print(f'Resuming from epoch {start_epoch}...')
-            best_loss = load_checkpoint(model, optimizer, checkpoint_file)
+            best_loss = load_checkpoint(model, optimizer, best_checkpoint_file)
+            current_epoch_start = start_epoch
+        elif os.path.exists(latest_checkpoint_file):
+            print(f'Resuming from epoch {start_epoch}...')
+            best_loss = load_checkpoint(model, optimizer, latest_checkpoint_file)
             current_epoch_start = start_epoch
         else:
-            raise FileNotFoundError(f'Checkpoint for epoch {start_epoch} not found at {checkpoint_file}')
+            raise FileNotFoundError(f'Checkpoint for epoch {start_epoch} not found.')
     else:
         # start_epoch == 0: Start from scratch
         current_epoch_start = 0
